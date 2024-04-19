@@ -1,5 +1,8 @@
 import os
+from typing import Annotated
 import motor.motor_asyncio
+from bson import ObjectId as _ObjectId
+from pydantic import AfterValidator
 from pymongo.errors import ConnectionFailure
 
 from src.config import settings
@@ -31,3 +34,11 @@ async def test_connection() -> None:
         logger.error(f"Could not connect to MongoDB at {mongo_client.address}:\n{e}")
         os._exit(1)
 
+
+def check_object_id(value: str) -> str:
+    if not _ObjectId.is_valid(value):
+        raise ValueError('Invalid ObjectId')
+    return value
+
+
+ObjectId = Annotated[str, AfterValidator(check_object_id)]
