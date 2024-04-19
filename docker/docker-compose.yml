@@ -1,0 +1,22 @@
+version: "3.9"
+name: fastapi-mongo-crud-example
+
+services:
+  app:
+    container_name: app
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .docker.env
+  
+  mongo:
+    container_name: mongo
+    image: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example 
