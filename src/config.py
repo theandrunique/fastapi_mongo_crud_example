@@ -9,7 +9,7 @@ class Settings(BaseSettings):
         case_sensitive=True,
     )
 
-    PROJECT_NAME: str = "Authorization Server"
+    PROJECT_NAME: str = "FastAPI Mongo CRUD Example"
     SERVER_HOST: str = "http://localhost"
 
     MONGO_URL: str
