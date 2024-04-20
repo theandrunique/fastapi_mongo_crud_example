@@ -27,8 +27,8 @@ class ItemRepository:
         result = await item_collection.find().skip(offset).to_list(length=count)
         return [ItemInMongo(**item) for item in result]
 
-    async def get(self, item_id: str) -> ItemInMongo | None:
-        result = await item_collection.find_one({"_id": item_id})
+    async def get(self, id: str) -> ItemInMongo | None:
+        result = await item_collection.find_one({"_id": id})
         if result is None:
             return None
         return ItemInMongo(**result)
