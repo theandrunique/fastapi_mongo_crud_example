@@ -1,5 +1,3 @@
-
-
 async def test_create_item(async_client):
     new_item = {
         "name": "Foo",
