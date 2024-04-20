@@ -10,5 +10,5 @@ app.include_router(items_router, prefix="/items", tags=["items"])
 
 
 @app.get("/")
-def root():
+def root() -> dict[str, str]:
     return {"message": "Hello World"}

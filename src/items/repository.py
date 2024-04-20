@@ -2,7 +2,7 @@ from typing import Any
 
 from pymongo import ReturnDocument
 
-from src.mongo import db
+from src.mongo import PyObjectId, db
 
 from .schemas import Item, ItemCreate
 
@@ -26,13 +26,13 @@ class ItemRepository:
         result = await item_collection.find().skip(offset).to_list(length=count)
         return [Item(**item) for item in result]
 
-    async def get(self, id: str) -> Item | None:
+    async def get(self, id: PyObjectId) -> Item | None:
         result = await item_collection.find_one({"_id": id})
         if result is None:
             return None
         return Item(**result)
 
-    async def update(self, id: str, new_values: dict[str, Any]) -> Item:
+    async def update(self, id: PyObjectId, new_values: dict[str, Any]) -> Item:
         updated_app = await item_collection.find_one_and_update(
             {"_id": id},
             {"$set": new_values},
@@ -40,6 +40,6 @@ class ItemRepository:
         )
         return Item(**updated_app)
 
-    async def delete(self, id: str) -> int:
+    async def delete(self, id: PyObjectId) -> int:
         result = await item_collection.delete_one({"_id": id})
         return result.deleted_count

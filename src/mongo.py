@@ -11,7 +11,7 @@ from pymongo.errors import ConnectionFailure
 from src.config import settings
 from src.logging import logger
 
-mongo_client = motor.motor_asyncio.AsyncIOMotorClient(  # type: ignore
+mongo_client = motor.motor_asyncio.AsyncIOMotorClient(
     settings.MONGO_URL,
     uuidRepresentation="standard",
     serverSelectionTimeoutMS=5000,
