@@ -9,8 +9,9 @@ async def on_startup(app: FastAPI) -> None:
     await test_connection()
     ...
 
-async def on_shutdown(app: FastAPI) -> None:
-    ...
+
+async def on_shutdown(app: FastAPI) -> None: ...
+
 
 async def lifespan(app: FastAPI) -> Any:
     await on_startup(app)

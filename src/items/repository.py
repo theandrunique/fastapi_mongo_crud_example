@@ -10,8 +10,7 @@ item_collection = db["items"]
 
 
 class ItemRepository:
-    def __init__(self) -> None:
-        ...
+    def __init__(self) -> None: ...
 
     async def add(self, item: ItemCreateSchema) -> ItemInMongo:
         result = await item_collection.insert_one(
@@ -44,4 +43,3 @@ class ItemRepository:
     async def delete(self, id: str) -> int:
         result = await item_collection.delete_one({"_id": id})
         return result.deleted_count
-

@@ -12,7 +12,8 @@ from src.config import settings
 from src.logging import logger
 
 mongo_client = motor.motor_asyncio.AsyncIOMotorClient(  # type: ignore
-    settings.MONGO_URL, uuidRepresentation="standard",
+    settings.MONGO_URL,
+    uuidRepresentation="standard",
     serverSelectionTimeoutMS=5000,
 )
 

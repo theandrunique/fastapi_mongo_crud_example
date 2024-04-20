@@ -11,11 +11,10 @@ repository = ItemRepository()
 
 router = APIRouter()
 
+
 @router.get("/", response_model=ItemCollection)
 async def get_items(offset: NonNegativeInt = 0, count: NonNegativeInt = 20):
-    return ItemCollection(
-        items=await repository.get_all(count, offset)
-    )
+    return ItemCollection(items=await repository.get_all(count, offset))
 
 
 @router.get("/{item_id}")

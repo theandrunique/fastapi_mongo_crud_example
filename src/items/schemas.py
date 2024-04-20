@@ -5,8 +5,7 @@ from src.mongo import PyObjectId
 
 class ItemInMongo(BaseModel):
     id: PyObjectId = Field(
-        validation_alias=AliasChoices("id", "_id"),
-        serialization_alias="id"
+        validation_alias=AliasChoices("id", "_id"), serialization_alias="id"
     )
     name: str
     price: float
@@ -20,9 +19,9 @@ class ItemCreateSchema(BaseModel):
 
 
 class ItemUpdateSchema(BaseModel):
-    name: str | None
-    price: float | None
-    count: int | None
+    name: str | None = Field(None)
+    price: float | None = Field(None)
+    count: int | None = Field(None)
 
 
 class ItemCollection(BaseModel):
