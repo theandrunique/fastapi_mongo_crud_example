@@ -4,7 +4,7 @@ import motor.motor_asyncio
 from pymongo.errors import ConnectionFailure
 
 from src.config import settings
-from src.logging import logger
+from src.logger import logger
 
 client = motor.motor_asyncio.AsyncIOMotorClient(
     settings.MONGO_URL,
