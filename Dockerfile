@@ -1,9 +1,10 @@
 FROM python:3.11-slim as builder
 
+RUN python -m pip install poetry==1.8.2 
+
 COPY pyproject.toml ./
 
-RUN python -m pip install poetry==1.8.2 \
-    && poetry export -o requirements.txt --without-hashes
+RUN poetry export -o requirements.txt --without-hashes
 
 
 FROM python:3.11-slim
