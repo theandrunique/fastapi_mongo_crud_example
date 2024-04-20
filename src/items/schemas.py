@@ -3,7 +3,7 @@ from pydantic import AliasChoices, BaseModel, Field
 from src.mongo import PyObjectId
 
 
-class ItemInMongo(BaseModel):
+class Item(BaseModel):
     id: PyObjectId = Field(
         validation_alias=AliasChoices("id", "_id"), serialization_alias="id"
     )
@@ -12,17 +12,17 @@ class ItemInMongo(BaseModel):
     count: int
 
 
-class ItemCreateSchema(BaseModel):
+class ItemCreate(BaseModel):
     name: str
     price: float
     count: int
 
 
-class ItemUpdateSchema(BaseModel):
+class ItemUpdate(BaseModel):
     name: str | None = Field(None)
     price: float | None = Field(None)
     count: int | None = Field(None)
 
 
 class ItemCollection(BaseModel):
-    items: list[ItemInMongo]
+    items: list[Item]

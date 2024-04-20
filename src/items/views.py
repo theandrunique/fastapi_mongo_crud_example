@@ -5,7 +5,7 @@ from src.mongo import PyObjectId
 
 from .exceptions import ItemNotFound
 from .repository import ItemRepository
-from .schemas import ItemCollection, ItemCreateSchema, ItemUpdateSchema
+from .schemas import ItemCollection, ItemCreate, ItemUpdate
 
 repository = ItemRepository()
 
@@ -26,12 +26,12 @@ async def get_item(item_id: PyObjectId):
 
 
 @router.post("/")
-async def create_item(new_item: ItemCreateSchema):
+async def create_item(new_item: ItemCreate):
     return await repository.add(new_item)
 
 
 @router.patch("/{item_id}")
-async def update_item(item_id: PyObjectId, updated_item: ItemUpdateSchema):
+async def update_item(item_id: PyObjectId, updated_item: ItemUpdate):
     item = await repository.get(item_id)
     if not item:
         raise ItemNotFound()

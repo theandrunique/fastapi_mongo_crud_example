@@ -1,6 +1,6 @@
 import pytest
 
-from src.items.schemas import ItemCreateSchema, ItemInMongo
+from src.items.schemas import Item, ItemCreate
 from tests.test_items.fake_repository import FakeItemRepository
 
 
@@ -12,8 +12,8 @@ def patch_mongo(monkeypatch) -> FakeItemRepository:
 
 
 @pytest.fixture
-async def prepare_test_element(patch_mongo) -> ItemInMongo:
-    test_item = ItemCreateSchema(
+async def prepare_test_element(patch_mongo) -> Item:
+    test_item = ItemCreate(
         name="Foo",
         price=35.4,
         count=100,
