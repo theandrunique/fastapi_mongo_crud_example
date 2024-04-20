@@ -7,7 +7,6 @@ from src.mongo import test_connection
 
 async def on_startup(app: FastAPI) -> None:
     await test_connection()
-    ...
 
 
 async def on_shutdown(app: FastAPI) -> None: ...
