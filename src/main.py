@@ -9,6 +9,6 @@ app = FastAPI(lifespan=lifespan, title=settings.PROJECT_NAME)
 app.include_router(items_router, prefix="/items", tags=["items"])
 
 
-@app.get("/")
+@app.get("/ping")
 def root() -> dict[str, str]:
-    return {"message": "Hello World"}
+    return {"ping": "pong"}
