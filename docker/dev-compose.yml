@@ -9,8 +9,12 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    env_file:
-      - .docker.env
+    environment:
+      MONGO_USERNAME: ${MONGO_USERNAME} 
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_HOST: mongo
+      MONGO_PORT: 27017
+      MONGO_DATABASE_NAME: ${MONGO_DATABASE_NAME}
     volumes:
       - ../src:/app/src
     command: "uvicorn src.main:app --host 0.0.0.0 --port 8000 --log-config logger_config.yml --reload"
