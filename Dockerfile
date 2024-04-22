@@ -1,6 +1,6 @@
 FROM python:3.11-alpine as builder
 
-RUN python -m pip install poetry==1.8.2 
+RUN python -m pip --no-cache-dir install poetry==1.8.2 
 
 COPY pyproject.toml ./
 
@@ -13,7 +13,7 @@ WORKDIR /app
 
 COPY --from=builder requirements.txt ./
 
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
 COPY src src/
 
