@@ -12,8 +12,5 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "FastAPI Mongo CRUD Example"
     SERVER_HOST: str = "http://localhost"
 
-    MONGO_URL: str
-    MONGO_DATABASE_NAME: str
-
 
 settings = Settings()  # type: ignore

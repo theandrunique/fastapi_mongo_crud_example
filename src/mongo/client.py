@@ -1,18 +1,19 @@
 import os
 
 import motor.motor_asyncio
-from pymongo.errors import ConnectionFailure
+from pymongo.errors import ConnectionFailure, OperationFailure
 
-from src.config import settings
 from src.logger import logger
 
+from .config import settings
+
 client = motor.motor_asyncio.AsyncIOMotorClient(
-    settings.MONGO_URL,
+    settings.MONGO_URI,
     uuidRepresentation="standard",
     serverSelectionTimeoutMS=5000,
 )
 
-db = client[settings.MONGO_DATABASE_NAME]
+db = client[settings.DATABASE_NAME]
 
 
 async def test_connection() -> None:
@@ -30,5 +31,8 @@ async def test_connection() -> None:
         logger.info(formatted_info)
 
     except ConnectionFailure as e:
-        logger.error(f"Could not connect to MongoDB at {client.address}:\n{e}")
+        logger.error(f"Could not connect to MongoDB at {settings.HOST}:\n{e}")
+        os._exit(1)
+    except OperationFailure as e:
+        logger.error(f"Could not connect to MongoDB at {settings.HOST}:\n{e}")
         os._exit(1)
