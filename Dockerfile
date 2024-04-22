@@ -1,4 +1,4 @@
-FROM python:3.11-slim as builder
+FROM python:3.11-alpine as builder
 
 RUN python -m pip install poetry==1.8.2 
 
@@ -7,7 +7,7 @@ COPY pyproject.toml ./
 RUN poetry export -o requirements.txt --without-hashes
 
 
-FROM python:3.11-slim
+FROM python:3.11-alpine
 
 WORKDIR /app
 
