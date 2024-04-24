@@ -1,6 +1,6 @@
-APP=./docker/app-compose.yml
-MONGO=docker/mongo-compose.yml
-DEV=./docker/dev-compose.yml
+APP=./docker/docker-compose.app.yml
+MONGO=docker/docker-compose.mongo.yml
+DEV=./docker/docker-compose.dev.yml
 
 
 up:
