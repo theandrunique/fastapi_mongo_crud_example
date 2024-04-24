@@ -6,8 +6,6 @@ services:
     build:
       context: ../
       dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
     environment:
       MONGO_USERNAME: ${MONGO_USERNAME:?} 
       MONGO_PASSWORD: ${MONGO_PASSWORD:?}
