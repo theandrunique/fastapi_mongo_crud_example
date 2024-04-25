@@ -14,7 +14,7 @@ async def ping_mongo():
         attempt_text = f"({i + 1} attempt)" if i > 0 else ""
         try:
             logger.info(f"Pinging MongoDB... {attempt_text}")
-            await client.admin.command('ping')
+            await client.admin.command("ping")
             logger.info(f"MongoDB ping successful. Connected to {client.address}.")
             ping_success = True
             break
