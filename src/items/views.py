@@ -5,22 +5,24 @@ from pydantic import NonNegativeInt
 
 from src.mongo import PyObjectId
 
+from .dependencies import Repository
 from .exceptions import ItemNotFound
-from .repository import ItemRepository
 from .schemas import Item, ItemCollection, ItemCreate, ItemUpdate
-
-repository = ItemRepository()
 
 router = APIRouter()
 
 
 @router.get("/", response_model=ItemCollection)
-async def get_items(offset: NonNegativeInt = 0, count: NonNegativeInt = 20) -> Any:
+async def get_items(
+    repository: Repository,
+    offset: NonNegativeInt = 0,
+    count: NonNegativeInt = 20,
+) -> Any:
     return ItemCollection(items=await repository.get_all(count, offset))
 
 
 @router.get("/{item_id}")
-async def get_item(item_id: PyObjectId) -> Item:
+async def get_item(item_id: PyObjectId, repository: Repository) -> Item:
     found_item = await repository.get(item_id)
     if not found_item:
         raise ItemNotFound()
@@ -28,12 +30,14 @@ async def get_item(item_id: PyObjectId) -> Item:
 
 
 @router.post("/")
-async def create_item(new_item: ItemCreate) -> Item:
+async def create_item(new_item: ItemCreate, repository: Repository) -> Item:
     return await repository.add(new_item)
 
 
 @router.patch("/{item_id}")
-async def update_item(item_id: PyObjectId, updated_item: ItemUpdate) -> Item:
+async def update_item(
+    item_id: PyObjectId, updated_item: ItemUpdate, repository: Repository
+) -> Item:
     item = await repository.get(item_id)
     if not item:
         raise ItemNotFound()
@@ -46,7 +50,7 @@ async def update_item(item_id: PyObjectId, updated_item: ItemUpdate) -> Item:
 
 
 @router.delete("/{item_id}")
-async def delete_item(item_id: PyObjectId) -> None:
+async def delete_item(item_id: PyObjectId, repository: Repository) -> None:
     item = await repository.get(item_id)
     if not item:
         raise ItemNotFound()
