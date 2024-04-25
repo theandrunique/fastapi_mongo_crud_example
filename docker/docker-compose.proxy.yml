@@ -1,0 +1,15 @@
+services:
+  app:
+    labels:
+    - traefik.enable=true
+    - traefik.http.routers.fastapi-crud-example.rule=Host(`${DOMAIN_NAME?}`)
+    - traefik.http.routers.fastapi-crud-example.entrypoints=http
+    networks:
+      - traefik-public
+      - default
+
+networks:
+  traefik-public:
+    external: true
+
+  default:
