@@ -3,7 +3,8 @@ services:
     labels:
     - traefik.enable=true
     - traefik.http.routers.fastapi-crud-example.rule=Host(`${DOMAIN_NAME?}`)
-    - traefik.http.routers.fastapi-crud-example.entrypoints=http
+    - traefik.http.routers.fastapi-crud-example.tls=true
+    - traefik.http.routers.fastapi-crud-example.entrypoints=websecure
     networks:
       - traefik-public
       - default
