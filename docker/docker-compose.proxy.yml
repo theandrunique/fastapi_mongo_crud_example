@@ -4,17 +4,8 @@ services:
     - traefik.enable=true
     - traefik.docker.network=traefik
 
-    - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
-    - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
-
     - traefik.http.routers.fastapi-crud-example.rule=Host(`${DOMAIN_NAME?}`)
     - traefik.http.routers.fastapi-crud-example.entrypoints=http
-    - traefik.http.routers.fastapi-crud-example.middlewares=https-redirect
-
-    - traefik.http.routers.fastapi-crud-example-https.rule=Host(`${DOMAIN_NAME?}`)
-    - traefik.http.routers.fastapi-crud-example-https.entrypoints=https
-    - traefik.http.routers.fastapi-crud-example-https.tls.certresolver=le
-    - traefik.http.routers.fastapi-crud-example-https.tls=true
     networks:
       - traefik
       - default

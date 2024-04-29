@@ -2,6 +2,7 @@ APP=./docker/docker-compose.app.yml
 MONGO=./docker/docker-compose.mongo.yml
 DEV=./docker/docker-compose.dev.yml
 PROXY=./docker/docker-compose.proxy.yml
+PROXY_TLS=./docker/docker-compose.proxy.yml
 
 
 dev:
@@ -18,3 +19,9 @@ up-proxy:
 
 down-proxy:
 	docker compose -f ${APP} -f ${PROXY} -f ${MONGO} down
+
+up-proxy-tls:
+	docker compose -f ${APP} -f ${PROXY_TLS} -f ${MONGO} up -d --build
+
+down-proxy-tls:
+	docker compose -f ${APP} -f ${PROXY_TLS} -f ${MONGO} down
