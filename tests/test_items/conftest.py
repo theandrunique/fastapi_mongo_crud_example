@@ -1,19 +1,22 @@
 import pytest
 
-from src.items.dependencies import get_repository
+from src.items.dependencies import get_service
 from src.items.schemas import Item, ItemCreate
+from src.items.service import ItemsService
 from src.main import app
-from tests.test_items.fake_repository import FakeItemRepository
+from tests.base_fake_repo import BaseFakeRepository
 
 
 @pytest.fixture(autouse=True)
-def patch_mongo() -> FakeItemRepository:
-    repository = FakeItemRepository()
-    def fake_mongo_dep() -> FakeItemRepository:
-        return repository
+def patch_mongo() -> ItemsService:
+    repository = BaseFakeRepository()
+    items_service = ItemsService(repository=repository)
 
-    app.dependency_overrides[get_repository] = fake_mongo_dep
-    return repository
+    def fake_mongo_dep() -> BaseFakeRepository:
+        return items_service
+
+    app.dependency_overrides[get_service] = fake_mongo_dep
+    return items_service
 
 
 @pytest.fixture
@@ -23,4 +26,5 @@ async def prepare_test_element(patch_mongo) -> Item:
         price=35.4,
         count=100,
     )
-    return await patch_mongo.add(test_item)
+    id = await patch_mongo.add(test_item)
+    return Item(**test_item.model_dump(), id=id)
