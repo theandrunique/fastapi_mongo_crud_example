@@ -2,13 +2,14 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from src.mongo import MongoSession
+from src.mongo.client import db
 
-from .repository import ItemRepository
-
-
-async def get_repository(session: MongoSession) -> ItemRepository:
-    return ItemRepository(session=session)
+from .repository import ItemsRepository
+from .service import ItemsService
 
 
-Repository = Annotated[ItemRepository, Depends(get_repository)]
+async def get_service() -> ItemsService:
+    return ItemsService(repository=ItemsRepository(collection=db["items"]))
+
+
+ItemsServiceDep = Annotated[ItemsService, Depends(get_service)]

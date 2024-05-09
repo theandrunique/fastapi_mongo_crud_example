@@ -13,4 +13,4 @@ class Settings(BaseSettings):
     SERVER_HOST: str = "http://localhost"
 
 
-settings = Settings()  # type: ignore
+settings = Settings()

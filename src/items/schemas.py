@@ -18,6 +18,10 @@ class ItemCreate(BaseModel):
     count: int
 
 
+class ItemCreated(BaseModel):
+    id: PyObjectId
+
+
 class ItemUpdate(BaseModel):
     name: str | None = Field(None)
     price: float | None = Field(None)
@@ -26,3 +30,4 @@ class ItemUpdate(BaseModel):
 
 class ItemCollection(BaseModel):
     items: list[Item]
+

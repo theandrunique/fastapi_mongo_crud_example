@@ -8,19 +8,19 @@ from .client import client
 from .config import settings
 
 
-async def ping_mongo():
+async def ping_mongo() -> None:
     ping_success = False
     for i in range(settings.PING_ATTEMPTS):
         attempt_text = f"({i + 1} attempt)" if i > 0 else ""
         try:
             logger.info(f"Pinging MongoDB... {attempt_text}")
             await client.admin.command("ping")
-            logger.info(f"MongoDB ping successful. Connected to {client.address}.")
+            logger.info(f"MongoDB ping successful. Connected to {settings.URI}.")
             ping_success = True
             break
         except ConnectionFailure as e:
             logger.error(
-                f"Failed to ping MongoDB at ('{settings.HOST}', {settings.PORT}). Error: {e}"  # noqa: E501
+                f"Failed to ping MongoDB at {settings.URI}. Error: {e}"  # noqa: E501
             )
 
     if not ping_success:
