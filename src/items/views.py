@@ -12,7 +12,7 @@ from .schemas import Item, ItemCollection, ItemCreate, ItemCreated, ItemUpdate
 router = APIRouter()
 
 
-@router.get("/", response_model=ItemCollection)
+@router.get("", response_model=ItemCollection)
 async def get_items(
     service: ItemsServiceDep,
     offset: NonNegativeInt = 0,
@@ -29,7 +29,7 @@ async def get_item(item_id: PyObjectId, service: ItemsServiceDep) -> Item:
     return found_item
 
 
-@router.post("/")
+@router.post("")
 async def create_item(new_item: ItemCreate, service: ItemsServiceDep) -> ItemCreated:
     id = await service.add(new_item)
     return ItemCreated(id=id)
