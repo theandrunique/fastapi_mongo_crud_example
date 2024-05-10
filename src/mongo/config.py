@@ -1,3 +1,4 @@
+from pydantic import MongoDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -12,7 +13,7 @@ class MongoSettings(BaseSettings):
     DATABASE_NAME: str = "items"
 
     PING_ATTEMPTS: int = 5
-    URI: str
+    URI: MongoDsn
 
 
 settings = MongoSettings()  # type: ignore
