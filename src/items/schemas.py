@@ -30,4 +30,3 @@ class ItemUpdate(BaseModel):
 
 class ItemCollection(BaseModel):
     items: list[Item]
-

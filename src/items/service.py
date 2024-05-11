@@ -1,15 +1,15 @@
 from dataclasses import dataclass
 from typing import Any
 
-from src.mongo.base_repository import BaseMongoRepository
 from src.mongo.object_id import PyObjectId
 
+from .repository import ItemsRepository
 from .schemas import Item, ItemCreate, ItemUpdate
 
 
 @dataclass(kw_only=True)
 class ItemsService:
-    repository: BaseMongoRepository
+    repository: ItemsRepository
 
     async def add(self, item: ItemCreate) -> Any:
         return await self.repository.add(item.model_dump())
@@ -34,7 +34,5 @@ class ItemsService:
             return await self.repository.update(id, new_values)
         return None
 
-
     async def delete(self, id: PyObjectId) -> int:
         return await self.repository.delete(id)
-
