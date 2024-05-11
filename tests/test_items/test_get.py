@@ -7,7 +7,7 @@ async def test_get_item(async_client, prepare_test_element):
 
 
 async def test_get_list(async_client, prepare_test_element):
-    response = await async_client.get("/items/")
+    response = await async_client.get("/items")
     assert response.status_code == 200, response.json()
 
 

@@ -7,10 +7,13 @@ from src.main import app
 from tests.base_fake_repo import BaseFakeRepository
 
 
+class FakeItemsRepository(BaseFakeRepository):
+    ...
+
 @pytest.fixture(autouse=True)
 def patch_mongo() -> ItemsService:
-    repository = BaseFakeRepository()
-    items_service = ItemsService(repository=repository)
+    repository = FakeItemsRepository()
+    items_service = ItemsService(repository=repository) # pyright: ignore
 
     def fake_mongo_dep() -> BaseFakeRepository:
         return items_service

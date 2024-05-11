@@ -16,7 +16,6 @@ async def test_patch_all_fields_item(async_client, prepare_test_element):
     assert patched_item["name"] == "Bar"
 
 
-
 async def test_patch_item(async_client, prepare_test_element):
     response = await async_client.patch(
         f"/items/{prepare_test_element.id}", json={"count": 200}
