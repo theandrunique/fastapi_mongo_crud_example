@@ -13,7 +13,7 @@ class BaseFakeRepository[T]:
         else:
             id = item["id"]
         item.update({"id": id})
-        self.collection[id] = item # pyright: ignore
+        self.collection[id] = item  # pyright: ignore
         return id
 
     async def get(self, id: T) -> dict[str, Any] | None:
