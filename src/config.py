@@ -1,3 +1,4 @@
+from pydantic import MongoDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -12,5 +13,8 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "FastAPI Mongo CRUD Example"
     SERVER_HOST: str = "http://localhost"
 
+    MONGO_DATABASE_NAME: str = "items"
+    MONGO_URI: MongoDsn
 
-settings = Settings()
+
+settings = Settings()  # type: ignore

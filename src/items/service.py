@@ -1,9 +1,8 @@
 from dataclasses import dataclass
-from typing import Any
 
-from src.mongo.object_id import PyObjectId
+from src.repositories.base.items import ItemsRepository
+from src.schemas import PyObjectId
 
-from .repository import ItemsRepository
 from .schemas import Item, ItemCreate, ItemUpdate
 
 
@@ -11,8 +10,12 @@ from .schemas import Item, ItemCreate, ItemUpdate
 class ItemsService:
     repository: ItemsRepository
 
-    async def add(self, item: ItemCreate) -> Any:
-        return await self.repository.add(item.model_dump())
+    async def add(self, item_create: ItemCreate) -> Item:
+        inserted_id = await self.repository.add(item_create.model_dump())
+
+        inserted_item = await self.repository.get(inserted_id)
+        assert inserted_item is not None, "Item not found after insert"
+        return Item(**inserted_item)
 
     async def get_all(self, count: int, offset: int) -> list[Item]:
         result = await self.repository.get_many(count, offset)
@@ -28,10 +31,11 @@ class ItemsService:
         self,
         id: PyObjectId,
         values: ItemUpdate,
-    ) -> dict[str, Any] | None:
+    ) -> Item | None:
         new_values = values.model_dump(exclude_defaults=True)
         if new_values:
-            return await self.repository.update(id, new_values)
+            updated_item = await self.repository.update(id, new_values)
+            return Item(**updated_item)
         return None
 
     async def delete(self, id: PyObjectId) -> int:

@@ -1,6 +1,6 @@
 from pydantic import AliasChoices, BaseModel, Field
 
-from src.mongo import PyObjectId
+from src.schemas import PyObjectId
 
 
 class Item(BaseModel):
@@ -16,10 +16,6 @@ class ItemCreate(BaseModel):
     name: str
     price: float
     count: int
-
-
-class ItemCreated(BaseModel):
-    id: PyObjectId
 
 
 class ItemUpdate(BaseModel):
