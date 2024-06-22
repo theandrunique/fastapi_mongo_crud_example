@@ -1,10 +1,10 @@
 from typing import Any
+from uuid import UUID
 
 from fastapi import APIRouter
 from pydantic import NonNegativeInt
 
 from src.dependencies import Container, Provide
-from src.schemas import PyObjectId
 
 from .exceptions import ItemNotFound
 from .schemas import Item, ItemCollection, ItemCreate, ItemUpdate
@@ -23,7 +23,7 @@ async def get_items(
 
 @router.get("/{item_id}")
 async def get_item(
-    item_id: PyObjectId, items_service=Provide(Container.ItemsService)
+    item_id: UUID, items_service=Provide(Container.ItemsService)
 ) -> Item:
     found_item = await items_service.get(item_id)
     if not found_item:
@@ -41,7 +41,7 @@ async def create_item(
 
 @router.patch("/{item_id}")
 async def update_item(
-    item_id: PyObjectId,
+    item_id: UUID,
     updated_item: ItemUpdate,
     items_service=Provide(Container.ItemsService),
 ) -> None:
@@ -54,7 +54,7 @@ async def update_item(
 
 @router.delete("/{item_id}")
 async def delete_item(
-    item_id: PyObjectId, items_service=Provide(Container.ItemsService)
+    item_id: UUID, items_service=Provide(Container.ItemsService)
 ) -> None:
     item = await items_service.get(item_id)
     if not item:

@@ -3,8 +3,15 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from src.config import settings
+from src.database import DatabaseHelper
+from src.models import Base
 
-async def on_startup(app: FastAPI) -> None: ...
+
+async def on_startup(app: FastAPI) -> None:
+    db = DatabaseHelper(url=str(settings.SQLALCHEMY_DATABASE_URL))
+    async with db.engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 
 async def on_shutdown(app: FastAPI) -> None: ...

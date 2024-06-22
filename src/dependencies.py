@@ -7,8 +7,11 @@ from src.items.service import ItemsService
 def Provide[T](
     dependency: type[T],
 ) -> T:
-    def _dependency():
-        return container.resolve(dependency)
+    # TODO: add checking if dependency is registered
+
+    async def _dependency():
+        dep = container.resolve(dependency)
+        return dep
 
     return params.Depends(dependency=_dependency, use_cache=True)  # type: ignore
 

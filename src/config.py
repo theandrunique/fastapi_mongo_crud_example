@@ -16,5 +16,7 @@ class Settings(BaseSettings):
     MONGO_DATABASE_NAME: str = "items"
     MONGO_URI: MongoDsn
 
+    SQLALCHEMY_DATABASE_URL: str
+
 
 settings = Settings()  # type: ignore

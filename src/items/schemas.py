@@ -1,15 +1,14 @@
-from pydantic import AliasChoices, BaseModel, Field
+from pydantic import BaseModel, Field
 
-from src.schemas import PyObjectId
+from src.items.models import Item
 
-
-class Item(BaseModel):
-    id: PyObjectId = Field(
-        validation_alias=AliasChoices("id", "_id"), serialization_alias="id"
-    )
-    name: str
-    price: float
-    count: int
+# class Item(BaseModel):
+# id: PyObjectId = Field(
+# validation_alias=AliasChoices("id", "_id"), serialization_alias="id"
+# )
+# name: str
+# price: float
+# count: int
 
 
 class ItemCreate(BaseModel):
