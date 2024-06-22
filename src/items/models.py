@@ -1,7 +1,9 @@
 from dataclasses import dataclass
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import sqlalchemy
+from beanie import Document
+from pydantic import Field
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.models import Base
@@ -27,4 +29,8 @@ class ItemModel(Base):
     count: Mapped[int]
 
 
-class ItemMongoModel: ...
+class ItemMongoModel(Document):
+    id: UUID = Field(default_factory=uuid4)
+    name: str
+    price: float
+    count: int
