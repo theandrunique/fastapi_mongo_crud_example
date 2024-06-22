@@ -8,3 +8,4 @@ services:
       dockerfile: Dockerfile
     environment:
       MONGO_URI: ${MONGO_URI:?}
+      SQLALCHEMY_DATABASE_URL: ${SQLALCHEMY_DATABASE_URL:?}
