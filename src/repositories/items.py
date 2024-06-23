@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.items.models import Item, ItemModel, ItemMongoModel
 from src.repositories.base.items import ItemsRepository
@@ -57,9 +57,9 @@ class MongoItemsRepository(ItemsRepository):
         return True
 
 
-@dataclass(kw_only=True)
-class SQLalchemyItemsRepository(ItemsRepository):
-    session_maker: async_sessionmaker[AsyncSession]
+@dataclass
+class SQLAlchemyItemsRepository(ItemsRepository):
+    session: AsyncSession
 
     async def add(
         self,
@@ -67,10 +67,9 @@ class SQLalchemyItemsRepository(ItemsRepository):
         price: float,
         count: int,
     ) -> Item:
-        async with self.session_maker() as session:
-            new_item = ItemModel(name=name, price=price, count=count)
-            session.add(new_item)
-            await session.commit()
+        new_item = ItemModel(name=name, price=price, count=count)
+        self.session.add(new_item)
+        await self.session.commit()
 
         return Item(
             id=new_item.id,
@@ -80,8 +79,7 @@ class SQLalchemyItemsRepository(ItemsRepository):
         )
 
     async def get(self, id: UUID) -> Item | None:
-        async with self.session_maker() as session:
-            item = await session.get(ItemModel, id)
+        item = await self.session.get(ItemModel, id)
 
         if item is None:
             return None
@@ -90,8 +88,7 @@ class SQLalchemyItemsRepository(ItemsRepository):
     async def get_many(self, count: int, offset: int) -> list[Item]:
         stmt = select(ItemModel).offset(offset).limit(count)
 
-        async with self.session_maker() as session:
-            result = await session.execute(stmt)
+        result = await self.session.execute(stmt)
 
         return [
             Item(id=item.id, name=item.name, price=item.price, count=item.count)
@@ -99,23 +96,21 @@ class SQLalchemyItemsRepository(ItemsRepository):
         ]
 
     async def update(self, id: UUID, updated_item: Item):
-        async with self.session_maker() as session:
-            item = await session.get(ItemModel, id)
+        item = await self.session.get(ItemModel, id)
 
-            if item is None:
-                return
+        if item is None:
+            return
 
-            item.name = updated_item.name
-            item.price = updated_item.price
-            item.count = updated_item.count
-            await session.commit()
+        item.name = updated_item.name
+        item.price = updated_item.price
+        item.count = updated_item.count
+        await self.session.commit()
 
     async def delete(self, id: UUID) -> bool:
-        async with self.session_maker() as session:
-            item = await session.get(ItemModel, id)
-            if item is None:
-                return False
+        item = await self.session.get(ItemModel, id)
+        if item is None:
+            return False
 
-            await session.delete(item)
-            await session.commit()
-            return True
+        await self.session.delete(item)
+        await self.session.commit()
+        return True
