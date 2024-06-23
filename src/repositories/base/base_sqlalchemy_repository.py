@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from pydantic import BaseModel
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models import BaseORM
@@ -25,13 +25,17 @@ class BaseSQLAlchemyRepository[ModelType: BaseORM, SchemaType: BaseModel, IDType
             return None
         return self.schema.model_validate(item, from_attributes=True)
 
-    async def get_many(self, count: int, offset: int) -> list[SchemaType]:
+    async def get_many(self, count: int, offset: int) -> tuple[list[SchemaType], int]:
         stmt = select(self.model).offset(offset).limit(count)
+        total_items_stmt = select(func.count()).select_from(self.model)
+        total_items_result = await self.session.execute(total_items_stmt)
+        total_items = total_items_result.scalar()
+
         result = await self.session.execute(stmt)
         return [
             self.schema.model_validate(item, from_attributes=True)
             for item in result.scalars().all()
-        ]
+        ], total_items  # type: ignore
 
     async def update(self, id: IDType, updated_item: SchemaType):
         item = await self.session.get(self.model, id)

@@ -12,11 +12,13 @@ class ItemsService:
 
     async def add(self, item_create: ItemCreate) -> ItemSchema:
         inserted_item = await self.repository.add(
-            name=item_create.name, price=item_create.price, count=item_create.count
+            name=item_create.name,
+            price=item_create.price,
+            count=item_create.count,
         )
         return inserted_item
 
-    async def get_all(self, count: int, offset: int) -> list[ItemSchema]:
+    async def get_all(self, count: int, offset: int) -> tuple[list[ItemSchema], int]:
         result = await self.repository.get_many(count, offset)
         return result
 

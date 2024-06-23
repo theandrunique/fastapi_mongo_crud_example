@@ -21,11 +21,14 @@ class BaseMongoDBRepository[ModelType: Document, SchemaType: BaseModel, IDType](
             return None
         return self.schema.model_validate(item, from_attributes=True)
 
-    async def get_many(self, count: int, offset: int) -> list[SchemaType]:
-        items = await self.model.find_many().skip(offset).to_list(length=count)
+    async def get_many(
+        self, count: int, offset: int, **filters
+    ) -> tuple[list[SchemaType], int]:
+        query = self.model.find_many(sort=list(filters.items()))
+        items = await query.skip(offset).to_list(count)
         return [
             self.schema.model_validate(item, from_attributes=True) for item in items
-        ]
+        ], await query.count()
 
     async def update(self, id: IDType, updated_item: SchemaType):
         item = await self.model.find_one(self.model.id == id)

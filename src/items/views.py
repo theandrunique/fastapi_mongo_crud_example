@@ -2,23 +2,29 @@ from typing import Any
 from uuid import UUID
 
 from fastapi import APIRouter
-from pydantic import NonNegativeInt
 
 from src.dependencies import Container, Provide
+from src.schemas import PaginationParams, PaginationResponse
 
 from .exceptions import ItemNotFound
-from .schemas import ItemCollection, ItemCreate, ItemSchema, ItemUpdate
+from .schemas import ItemCreate, ItemSchema, ItemUpdate
 
 router = APIRouter()
 
 
-@router.get("", response_model=ItemCollection)
+@router.get("", response_model=PaginationResponse[ItemSchema])
 async def get_items(
+    pagination: PaginationParams,
     items_service=Provide(Container.ItemsService),
-    offset: NonNegativeInt = 0,
-    count: NonNegativeInt = 20,
 ) -> Any:
-    return ItemCollection(items=await items_service.get_all(count, offset))
+    items, total = await items_service.get_all(pagination.count, pagination.offset)
+
+    return PaginationResponse[ItemSchema](
+        items=items,
+        count=pagination.count,
+        offset=pagination.offset,
+        total=total,
+    )
 
 
 @router.get("/{item_id}")

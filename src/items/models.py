@@ -31,4 +31,4 @@ class ItemODM(Document):
     id: UUID = Field(default_factory=uuid4)
     name: str
     price: float
-    item_count: int
+    count: int
