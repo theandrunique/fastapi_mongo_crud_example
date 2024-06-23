@@ -1,16 +1,14 @@
-from dataclasses import dataclass
 from uuid import UUID, uuid4
 
 import sqlalchemy
 from beanie import Document
-from pydantic import Field
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.models import BaseORM
 
 
-@dataclass
-class ItemSchema:
+class ItemSchema(BaseModel):
     id: UUID
     name: str
     price: float
@@ -22,7 +20,7 @@ class ItemORM(BaseORM):
 
     id: Mapped[UUID] = mapped_column(
         primary_key=True,
-        server_default=sqlalchemy.text("gen_random_uuid ()"),
+        server_default=sqlalchemy.text("gen_random_uuid()"),
     )
     name: Mapped[str]
     price: Mapped[float]

@@ -8,6 +8,7 @@ class ItemsRepository(ABC):
     @abstractmethod
     async def add(
         self,
+        *,
         name: str,
         price: float,
         count: int,
