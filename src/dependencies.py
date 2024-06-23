@@ -1,15 +1,16 @@
+from collections.abc import AsyncGenerator
 from typing import Annotated
 
 from fastapi import Depends, params
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.container import container
-from src.database import DatabaseHelper
+from src.database import Database
 from src.items.service import ItemsService
 
 
-async def get_session() -> AsyncSession:
-    db = container.resolve(DatabaseHelper)
+async def get_session() -> AsyncGenerator[AsyncSession, None]:
+    db: Database = container.resolve(Database)  # type: ignore
     async with db.session_factory() as session:
         yield session
 

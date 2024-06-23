@@ -7,7 +7,7 @@ from pydantic import NonNegativeInt
 from src.dependencies import Container, Provide
 
 from .exceptions import ItemNotFound
-from .schemas import Item, ItemCollection, ItemCreate, ItemUpdate
+from .schemas import ItemCollection, ItemCreate, ItemSchema, ItemUpdate
 
 router = APIRouter()
 
@@ -24,7 +24,7 @@ async def get_items(
 @router.get("/{item_id}")
 async def get_item(
     item_id: UUID, items_service=Provide(Container.ItemsService)
-) -> Item:
+) -> ItemSchema:
     found_item = await items_service.get(item_id)
     if not found_item:
         raise ItemNotFound()
@@ -34,7 +34,7 @@ async def get_item(
 @router.post("")
 async def create_item(
     new_item_data: ItemCreate, items_service=Provide(Container.ItemsService)
-) -> Item:
+) -> ItemSchema:
     new_item = await items_service.add(new_item_data)
     return new_item
 

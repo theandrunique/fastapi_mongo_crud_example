@@ -1,10 +1,11 @@
 import punq
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from src.config import settings
-from src.database import DatabaseHelper
-from src.items.models import ItemMongoModel
+from src.database import Database
+from src.items.models import ItemODM
 from src.items.service import ItemsService
 from src.repositories.base.items import ItemsRepository
 from src.repositories.items import SQLAlchemyItemsRepository
@@ -16,21 +17,28 @@ async def init_mongodb() -> None:
         uuidRepresentation="standard",
     )
     db = client[settings.MONGO_DATABASE_NAME]
-    await init_beanie(database=db, document_models=[ItemMongoModel])
+    await init_beanie(database=db, document_models=[ItemODM])
 
 
-def init_db() -> DatabaseHelper:
-    return DatabaseHelper(url=str(settings.SQLALCHEMY_DATABASE_URL))
+def init_db() -> Database:
+    engine = create_async_engine(url=settings.SQLALCHEMY_DATABASE_URL)
+    return Database(
+        engine=engine,
+        session_factory=async_sessionmaker(
+            bind=engine,
+            autoflush=False,
+            autocommit=False,
+            expire_on_commit=False,
+        ),
+    )
 
 
 def init_container() -> punq.Container:
     container = punq.Container()
 
-    db_helper = init_db()
-
     container.register(
-        DatabaseHelper,
-        instance=db_helper,
+        Database,
+        instance=init_db(),
         scope=punq.Scope.singleton,
     )
 
@@ -39,7 +47,7 @@ def init_container() -> punq.Container:
     )
 
     # container.register(
-        # ItemsRepository, MongoItemsRepository, scope=punq.Scope.singleton
+    # ItemsRepository, MongoItemsRepository, scope=punq.Scope.singleton
     # )
 
     container.register(ItemsService, scope=punq.Scope.transient)

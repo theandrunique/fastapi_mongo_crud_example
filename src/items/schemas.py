@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from src.items.models import Item
+from src.items.models import ItemSchema
 
 # class Item(BaseModel):
 # id: PyObjectId = Field(
@@ -24,4 +24,4 @@ class ItemUpdate(BaseModel):
 
 
 class ItemCollection(BaseModel):
-    items: list[Item]
+    items: list[ItemSchema]

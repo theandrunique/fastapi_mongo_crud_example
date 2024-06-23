@@ -1,26 +1,9 @@
-from collections.abc import AsyncGenerator
+from dataclasses import dataclass
 
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-    async_sessionmaker,
-    create_async_engine,
-)
+from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker
 
 
-class DatabaseHelper:
-    def __init__(self, url: str) -> None:
-        self.engine = create_async_engine(url=url)
-
-        self.session_factory = async_sessionmaker(
-            bind=self.engine,
-            autoflush=False,
-            autocommit=False,
-            expire_on_commit=False,
-        )
-
-    async def session(self) -> AsyncGenerator[AsyncSession, None]:
-        async with self.session_factory() as session:
-            try:
-                yield session
-            finally:
-                await session.close()
+@dataclass(kw_only=True)
+class Database:
+    session_factory: async_sessionmaker
+    engine: AsyncEngine

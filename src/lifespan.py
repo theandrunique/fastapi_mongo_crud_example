@@ -3,16 +3,15 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from src.config import settings
-from src.container import init_mongodb
-from src.database import DatabaseHelper
-from src.models import Base
+from src.container import container, init_mongodb
+from src.database import Database
+from src.models import BaseORM
 
 
 async def on_startup(app: FastAPI) -> None:
-    db = DatabaseHelper(url=str(settings.SQLALCHEMY_DATABASE_URL))
+    db: Database = container.resolve(Database)  # type: ignore
     async with db.engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+        await conn.run_sync(BaseORM.metadata.create_all)
 
     await init_mongodb()
 

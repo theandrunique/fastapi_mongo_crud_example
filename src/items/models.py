@@ -6,18 +6,18 @@ from beanie import Document
 from pydantic import Field
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.models import Base
+from src.models import BaseORM
 
 
 @dataclass
-class Item:
+class ItemSchema:
     id: UUID
     name: str
     price: float
     count: int
 
 
-class ItemModel(Base):
+class ItemORM(BaseORM):
     __tablename__ = "items"
 
     id: Mapped[UUID] = mapped_column(
@@ -29,8 +29,8 @@ class ItemModel(Base):
     count: Mapped[int]
 
 
-class ItemMongoModel(Document):
+class ItemODM(Document):
     id: UUID = Field(default_factory=uuid4)
     name: str
     price: float
-    count: int
+    item_count: int
