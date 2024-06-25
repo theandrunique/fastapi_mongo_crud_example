@@ -1,7 +1,7 @@
-
 from unittest.mock import AsyncMock
 
 import pytest
+from faker import Faker
 
 from src.items.service import ItemsService
 from src.repositories.base.items import ItemsRepository
@@ -16,3 +16,8 @@ async def fake_repository():
 @pytest.fixture
 async def service(fake_repository):
     return ItemsService(repository=fake_repository)
+
+
+@pytest.fixture
+def faker():
+    return Faker()
