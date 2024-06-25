@@ -30,4 +30,3 @@ def Provide[T](
 
 class Container:
     ItemsService = ItemsService
-    Kek = int
