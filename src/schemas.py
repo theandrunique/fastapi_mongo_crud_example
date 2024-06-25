@@ -1,14 +1,14 @@
 from dataclasses import dataclass
-from typing import Annotated, Any
+from typing import Any
 
 import bson
-from fastapi import Query
-from fastapi.params import Depends
+from fastapi import Query, params
 from pydantic import (
     BaseModel,
     GetCoreSchemaHandler,
     GetJsonSchemaHandler,
     NonNegativeInt,
+    PositiveInt,
 )
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import CoreSchema, core_schema
@@ -42,20 +42,20 @@ class PaginationResponse[T](BaseModel):
     items: list[T]
     total: int
     offset: int
-    count: int
+    limit: int
 
 
 @dataclass
-class Pagination:
+class PaginationParams:
     offset: int
-    count: int
+    limit: int
 
 
-def pagination_params(
-    offset: NonNegativeInt = Query(0),
-    count: NonNegativeInt = Query(20),
-) -> Pagination:
-    return Pagination(offset=offset, count=count)
+def Pagination() -> PaginationParams:
+    async def dependency(
+        offset: NonNegativeInt = Query(0),
+        limit: PositiveInt = Query(20, le=100),
+    ):
+        return PaginationParams(offset=offset, limit=limit)
 
-
-PaginationParams = Annotated[Pagination, Depends(pagination_params)]
+    return params.Depends(dependency=dependency, use_cache=True)  # type: ignore

@@ -4,7 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter
 
 from src.dependencies import Container, Provide
-from src.schemas import PaginationParams, PaginationResponse
+from src.schemas import Pagination, PaginationResponse
 
 from .exceptions import ItemNotFound
 from .schemas import ItemCreate, ItemSchema, ItemUpdate
@@ -14,14 +14,14 @@ router = APIRouter()
 
 @router.get("", response_model=PaginationResponse[ItemSchema])
 async def get_items(
-    pagination: PaginationParams,
+    pagination=Pagination(),
     items_service=Provide(Container.ItemsService),
 ) -> Any:
-    items, total = await items_service.get_all(pagination.count, pagination.offset)
+    items, total = await items_service.get_all(pagination.limit, pagination.offset)
 
     return PaginationResponse[ItemSchema](
         items=items,
-        count=len(items),
+        limit=len(items),
         offset=pagination.offset,
         total=total,
     )
