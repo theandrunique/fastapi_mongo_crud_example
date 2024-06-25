@@ -21,7 +21,7 @@ async def get_items(
 
     return PaginationResponse[ItemSchema](
         items=items,
-        count=pagination.count,
+        count=len(items),
         offset=pagination.offset,
         total=total,
     )
