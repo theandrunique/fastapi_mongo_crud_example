@@ -18,7 +18,8 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
 def Provide[T](
     dependency: type[T],
 ) -> T:
-    # TODO: add checking if dependency is registered
+    if not container.registrations[dependency]:
+        raise ValueError(f"Dependency {dependency} is not registered")
 
     async def _dependency(session: Annotated[AsyncSession, Depends(get_session)]):
         dep = container.resolve(dependency, session=session)
@@ -29,3 +30,4 @@ def Provide[T](
 
 class Container:
     ItemsService = ItemsService
+    Kek = int
