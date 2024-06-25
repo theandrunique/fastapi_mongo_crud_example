@@ -9,10 +9,13 @@ from src.models import BaseORM
 
 
 @dataclass
-class BaseSQLAlchemyRepository[ModelType: BaseORM, SchemaType: BaseModel, IDType](ABC):
+class SQLAlchemyRepository[ModelType: BaseORM, SchemaType: BaseModel, IDType](ABC):
     model: type[ModelType]
     schema: type[SchemaType]
     session: AsyncSession = field(init=False)
+
+    async def init(self, session: AsyncSession):
+        self.session = session
 
     async def add(self, **kwargs) -> SchemaType:
         new_item = self.model(**kwargs)
@@ -28,7 +31,7 @@ class BaseSQLAlchemyRepository[ModelType: BaseORM, SchemaType: BaseModel, IDType
 
     async def get_many(self, count: int, offset: int) -> tuple[list[SchemaType], int]:
         stmt = select(self.model).offset(offset).limit(count)
-        total_items_stmt = select(func.count()).select_from(self.model)
+        total_items_stmt = select(func.count(1)).select_from(self.model)
         total_items_result = await self.session.execute(total_items_stmt)
         total_items = total_items_result.scalar()
 

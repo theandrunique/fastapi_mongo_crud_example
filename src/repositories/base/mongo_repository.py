@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 
 @dataclass
-class BaseMongoDBRepository[ModelType: Document, SchemaType: BaseModel, IDType](ABC):
+class MongoDBRepository[ModelType: Document, SchemaType: BaseModel, IDType](ABC):
     model: type[ModelType]
     schema: type[SchemaType]
 

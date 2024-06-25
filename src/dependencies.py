@@ -3,7 +3,7 @@ from fastapi import params
 from src.container import container
 from src.database import Database
 from src.items.service import ItemsService
-from src.repositories.base.base_sqlalchemy_repository import BaseSQLAlchemyRepository
+from src.repositories.base.sqlalchemy_repository import SQLAlchemyRepository
 
 
 def Provide[T](
@@ -16,11 +16,12 @@ def Provide[T](
         dep = container.resolve(dependency)
 
         if hasattr(dep, "repository") and isinstance(
-            dep.repository, BaseSQLAlchemyRepository
+            dep.repository, SQLAlchemyRepository
         ):
+            repository: SQLAlchemyRepository = dep.repository  # type: ignore
             db: Database = container.resolve(Database)  # type: ignore
             async with db.session_factory() as session:
-                dep.repository.session = session  # type: ignore
+                await repository.init(session)
                 yield dep
         else:
             yield dep
