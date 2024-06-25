@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from abc import ABC
+from dataclasses import dataclass, field
 
 from pydantic import BaseModel
 from sqlalchemy import func, select
@@ -8,10 +9,10 @@ from src.models import BaseORM
 
 
 @dataclass
-class BaseSQLAlchemyRepository[ModelType: BaseORM, SchemaType: BaseModel, IDType]:
-    session: AsyncSession
+class BaseSQLAlchemyRepository[ModelType: BaseORM, SchemaType: BaseModel, IDType](ABC):
     model: type[ModelType]
     schema: type[SchemaType]
+    session: AsyncSession = field(init=False)
 
     async def add(self, **kwargs) -> SchemaType:
         new_item = self.model(**kwargs)
