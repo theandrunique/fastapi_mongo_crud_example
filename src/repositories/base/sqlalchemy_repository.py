@@ -30,18 +30,23 @@ class SQLAlchemyRepository[ModelType: BaseORM, SchemaType: BaseModel, IDType](
                 return None
             return self.schema.model_validate(item, from_attributes=True)
 
-    async def get_many(self, count: int, offset: int) -> tuple[list[SchemaType], int]:
+    async def get_many(self, count: int, offset: int) -> list[SchemaType]:
         async with self.db_helper.session() as session:
             stmt = select(self.model).offset(offset).limit(count)
-            total_items_stmt = select(func.count(1)).select_from(self.model)
-            total_items_result = await session.execute(total_items_stmt)
-            total_items = total_items_result.scalar()
 
             result = await session.execute(stmt)
             return [
                 self.schema.model_validate(item, from_attributes=True)
                 for item in result.scalars().all()
-            ], total_items  # type: ignore
+            ]
+
+    async def count(self) -> int:
+        async with self.db_helper.session() as session:
+            stmt = select(func.count(1)).select_from(self.model)
+            result = await session.execute(stmt)
+            total_count = result.scalar()
+            assert total_count is not None
+            return total_count
 
     async def update(self, id: IDType, updated_item: SchemaType) -> None:
         async with self.db_helper.session() as session:

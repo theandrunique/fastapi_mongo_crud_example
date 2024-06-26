@@ -26,12 +26,15 @@ class MongoDBRepository[ModelType: Document, SchemaType: BaseModel, IDType](Repo
         self,
         count: int,
         offset: int,
-    ) -> tuple[list[SchemaType], int]:
+    ) -> list[SchemaType]:
         query = self.model.find_many()
         items = await query.skip(offset).to_list(count)
         return [
             self.schema.model_validate(item, from_attributes=True) for item in items
-        ], await query.count()
+        ]
+
+    async def count(self) -> int:
+        return await self.model.count()
 
     async def update(self, id: IDType, updated_item: SchemaType):
         updated_item_model = self.model(id=id, **updated_item.model_dump())

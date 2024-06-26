@@ -84,9 +84,8 @@ async def test_delete_item(repository, random_user_schema):
 
 async def test_get_many_items(repository, faker):
     items = [await repository.add(name=faker.name()) for _ in range(5)]
-    retrieved_items, total_count = await repository.get_many(count=5, offset=0)
+    retrieved_items = await repository.get_many(count=5, offset=0)
     assert len(retrieved_items) == 5
-    assert total_count == 5
     for item in items:
         assert any(retrieved_item.id == item.id for retrieved_item in retrieved_items)
 

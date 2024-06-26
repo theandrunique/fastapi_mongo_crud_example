@@ -43,7 +43,8 @@ async def test_get_all_items(service, fake_repository, faker):
     ]
 
     total_count = len(items)
-    fake_repository.get_many.return_value = (items, total_count)
+    fake_repository.get_many.return_value = items
+    fake_repository.count.return_value = total_count
 
     result, count = await service.get_all(count=10, offset=0)
 

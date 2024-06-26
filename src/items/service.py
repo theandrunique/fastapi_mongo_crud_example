@@ -21,7 +21,8 @@ class ItemsService:
 
     async def get_all(self, count: int, offset: int) -> tuple[list[ItemSchema], int]:
         result = await self.repository.get_many(count, offset)
-        return result
+        count = await self.repository.count()
+        return result, count
 
     async def get(self, id: UUID) -> ItemSchema | None:
         result = await self.repository.get(id)
