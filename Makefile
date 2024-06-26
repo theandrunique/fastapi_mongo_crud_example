@@ -12,22 +12,16 @@ shell:
 	docker compose -f ${APP} exec -it ${APP_SERVICE} bash
 
 up-local:
-	uvicorn src.main:app --reload --host 0.0.0.0 --port 8000 --log-config logger_config.yml 
+	uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 
 up-dev:
 	docker compose -f ${APP} -f ${DEV} -f ${MONGO} -f ${POSTGRESS} ${ENV_FILE} up --build --abort-on-container-exit --attach ${APP_SERVICE} --no-log-prefix
 
-down:
-	docker compose -f ${APP} -f ${DEV} -f ${MONGO} down
-
 up-proxy:
-	docker compose -f ${APP} -f ${PROXY} -f ${MONGO} ${ENV_FILE} up -d --build
-
-down-proxy:
-	docker compose -f ${APP} -f ${PROXY} -f ${MONGO} down
+	docker compose -f ${APP} -f ${PROXY} -f ${MONGO} -f ${POSTGRESS} ${ENV_FILE} up -d --build
 
 up-proxy-tls:
-	docker compose -f ${APP} -f ${PROXY_TLS} -f ${MONGO} ${ENV_FILE} up -d --build
+	docker compose -f ${APP} -f ${PROXY_TLS} -f ${MONGO} -f ${POSTGRESS} ${ENV_FILE} up -d --build
 
-down-proxy-tls:
-	docker compose -f ${APP} -f ${PROXY_TLS} -f ${MONGO} down
+down:
+	docker compose -f ${APP} -f ${DEV} -f ${MONGO} -f ${POSTGRESS} down
