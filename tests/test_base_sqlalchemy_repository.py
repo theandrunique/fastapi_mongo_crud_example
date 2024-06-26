@@ -35,6 +35,7 @@ def random_user_schema(faker) -> dict[str, Any]:
         "name": faker.name(),
     }
 
+
 @pytest.fixture(scope="function")
 async def async_engine():
     engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=True)

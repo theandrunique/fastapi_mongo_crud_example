@@ -2,11 +2,11 @@ from uuid import uuid4
 
 import pytest
 
+from src.items.exceptions import ItemNotFound
 from src.items.models import ItemSchema
 from src.items.schemas import ItemCreate, ItemUpdate
 
 
-@pytest.mark.asyncio
 async def test_add_item(service, fake_repository, faker):
     item_create = ItemCreate(
         name=faker.name(),
@@ -31,7 +31,6 @@ async def test_add_item(service, fake_repository, faker):
     )
 
 
-@pytest.mark.asyncio
 async def test_get_all_items(service, fake_repository, faker):
     items = [
         ItemSchema(
@@ -53,7 +52,6 @@ async def test_get_all_items(service, fake_repository, faker):
     fake_repository.get_many.assert_called_once_with(10, 0)
 
 
-@pytest.mark.asyncio
 async def test_get_item(service, fake_repository, faker):
     item_id = uuid4()
     expected_item = ItemSchema(
@@ -70,7 +68,6 @@ async def test_get_item(service, fake_repository, faker):
     fake_repository.get.assert_called_once_with(item_id)
 
 
-@pytest.mark.asyncio
 async def test_get_item_not_found(service, fake_repository):
     item_id = uuid4()
     fake_repository.get.return_value = None
@@ -81,7 +78,6 @@ async def test_get_item_not_found(service, fake_repository):
     fake_repository.get.assert_called_once_with(item_id)
 
 
-@pytest.mark.asyncio
 async def test_update_item(service, fake_repository, faker):
     item_id = uuid4()
 
@@ -106,14 +102,12 @@ async def test_update_item(service, fake_repository, faker):
     fake_repository.get.return_value = existing_item
     fake_repository.update.return_value = updated_item
 
-    result = await service.update(item_id, updated_values)
+    await service.update(item_id, updated_values)
 
-    assert result == updated_item
     fake_repository.get.assert_called_once_with(item_id)
     fake_repository.update.assert_called_once_with(item_id, existing_item)
 
 
-@pytest.mark.asyncio
 async def test_update_item_not_found(service, fake_repository, faker):
     item_id = uuid4()
     updated_values = ItemUpdate(
@@ -123,14 +117,13 @@ async def test_update_item_not_found(service, fake_repository, faker):
     )
     fake_repository.get.return_value = None
 
-    result = await service.update(item_id, updated_values)
+    with pytest.raises(ItemNotFound):
+        await service.update(item_id, updated_values)
 
-    assert result is None
     fake_repository.get.assert_called_once_with(item_id)
     fake_repository.update.assert_not_called()
 
 
-@pytest.mark.asyncio
 async def test_delete_item(service, fake_repository, faker):
     item_id = uuid4()
     existing_item = ItemSchema(
@@ -141,22 +134,19 @@ async def test_delete_item(service, fake_repository, faker):
     )
 
     fake_repository.get.return_value = existing_item
-    fake_repository.delete.return_value = True
 
-    result = await service.delete(item_id)
+    await service.delete(item_id)
 
-    assert result is True
     fake_repository.get.assert_called_once_with(item_id)
     fake_repository.delete.assert_called_once_with(item_id)
 
 
-@pytest.mark.asyncio
 async def test_delete_item_not_found(service, fake_repository):
     item_id = uuid4()
     fake_repository.get.return_value = None
 
-    result = await service.delete(item_id)
+    with pytest.raises(ItemNotFound):
+        await service.delete(item_id)
 
-    assert result is False
     fake_repository.get.assert_called_once_with(item_id)
     fake_repository.delete.assert_not_called()
