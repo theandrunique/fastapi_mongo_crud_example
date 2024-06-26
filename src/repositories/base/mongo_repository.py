@@ -1,14 +1,13 @@
-from abc import ABC
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from beanie import Document
 from pydantic import BaseModel
 
 
 @dataclass
-class MongoDBRepository[ModelType: Document, SchemaType: BaseModel, IDType](ABC):
-    model: type[ModelType]
-    schema: type[SchemaType]
+class MongoDBRepository[ModelType: Document, SchemaType: BaseModel, IDType]:
+    model: type[ModelType] = field(init=False)
+    schema: type[SchemaType] = field(init=False)
 
     async def add(self, **kwargs) -> SchemaType:
         new_item = self.model(**kwargs)
@@ -31,10 +30,8 @@ class MongoDBRepository[ModelType: Document, SchemaType: BaseModel, IDType](ABC)
         ], await query.count()
 
     async def update(self, id: IDType, updated_item: SchemaType):
-        item = await self.model.find_one(self.model.id == id)
-        if item is None:
-            return None
-        await item.set(updated_item.model_dump())
+        updated_item_model = self.model(id=id, **updated_item.model_dump())
+        await updated_item_model.replace()
 
     async def delete(self, id: IDType) -> bool:
         item = await self.model.find_one(self.model.id == id)

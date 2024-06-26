@@ -9,13 +9,17 @@ from src.repositories.base.sqlalchemy_repository import SQLAlchemyRepository
 class MongoItemsRepository(
     MongoDBRepository[ItemODM, ItemSchema, UUID], ItemsRepository
 ):
-    def __init__(self) -> None:
-        super().__init__(ItemODM, ItemSchema)
+    def __init__(self, *args, **kwargs):
+        self.model = ItemODM
+        self.schema = ItemSchema
+        super().__init__(*args, **kwargs)
 
 
 class SQLAlchemyItemsRepository(
     SQLAlchemyRepository[ItemORM, ItemSchema, UUID],
     ItemsRepository,
 ):
-    def __init__(self):
-        super().__init__(ItemORM, ItemSchema)
+    def __init__(self, *args, **kwargs):
+        self.model = ItemORM
+        self.schema = ItemSchema
+        super().__init__(*args, **kwargs)

@@ -1,17 +1,16 @@
-from abc import ABC
 from dataclasses import dataclass, field
 
 from pydantic import BaseModel
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models import BaseORM
 
 
 @dataclass
-class SQLAlchemyRepository[ModelType: BaseORM, SchemaType: BaseModel, IDType](ABC):
-    model: type[ModelType]
-    schema: type[SchemaType]
+class SQLAlchemyRepository[ModelType: BaseORM, SchemaType: BaseModel, IDType]:
+    model: type[ModelType] = field(init=False)
+    schema: type[SchemaType] = field(init=False)
     session: AsyncSession = field(init=False)
 
     async def init(self, session: AsyncSession):
@@ -41,18 +40,16 @@ class SQLAlchemyRepository[ModelType: BaseORM, SchemaType: BaseModel, IDType](AB
             for item in result.scalars().all()
         ], total_items  # type: ignore
 
-    async def update(self, id: IDType, updated_item: SchemaType):
-        item = await self.session.get(self.model, id)
-        if item is None:
-            return None
-        for key, value in updated_item.model_dump().items():
-            setattr(item, key, value)
+    async def update(self, id: IDType, updated_item: SchemaType) -> None:
+        stmt = (
+            update(self.model)
+            .where(self.model.id == id)
+            .values(**updated_item.model_dump())
+        )
+        await self.session.execute(stmt)
         await self.session.commit()
 
-    async def delete(self, id: IDType) -> bool:
-        item = await self.session.get(self.model, id)
-        if item is None:
-            return False
-        await self.session.delete(item)
+    async def delete(self, id: IDType) -> None:
+        stmt = delete(self.model).where(self.model.id == id)
+        await self.session.execute(stmt)
         await self.session.commit()
-        return True
