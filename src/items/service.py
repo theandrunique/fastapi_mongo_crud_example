@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID
 
+from src.items.exceptions import ItemNotFound
 from src.repositories.base.items import ItemsRepository
 
 from .schemas import ItemCreate, ItemSchema, ItemUpdate
@@ -32,10 +33,10 @@ class ItemsService:
         self,
         id: UUID,
         values: ItemUpdate,
-    ) -> ItemSchema | None:
+    ) ->  None:
         item = await self.repository.get(id)
         if item is None:
-            return None
+            raise ItemNotFound()
 
         if values.count is not None:
             item.count = values.count
@@ -47,11 +48,10 @@ class ItemsService:
             item.price = values.price
 
         await self.repository.update(id, item)
-        return item
 
-    async def delete(self, id: UUID) -> bool:
+    async def delete(self, id: UUID) -> None:
         item = await self.repository.get(id)
         if not item:
-            return False
+            raise ItemNotFound()
 
-        return await self.repository.delete(id)
+        await self.repository.delete(id)

@@ -16,7 +16,7 @@ def Provide[T](
         dep = container.resolve(dependency)
 
         if hasattr(dep, "repository") and isinstance(
-            dep.repository, SQLAlchemyRepository
+            dep.repository, SQLAlchemyRepository # type: ignore
         ):
             repository: SQLAlchemyRepository = dep.repository  # type: ignore
             db: Database = container.resolve(Database)  # type: ignore

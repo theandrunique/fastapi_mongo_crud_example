@@ -5,10 +5,13 @@ from sqlalchemy import delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models import BaseORM
+from src.repositories.base.repository import Repository
 
 
 @dataclass
-class SQLAlchemyRepository[ModelType: BaseORM, SchemaType: BaseModel, IDType]:
+class SQLAlchemyRepository[ModelType: BaseORM, SchemaType: BaseModel, IDType](
+    Repository
+):
     model: type[ModelType] = field(init=False)
     schema: type[SchemaType] = field(init=False)
     session: AsyncSession = field(init=False)
