@@ -33,7 +33,7 @@ class ItemsService:
         self,
         id: UUID,
         values: ItemUpdate,
-    ) ->  None:
+    ) -> None:
         item = await self.repository.get(id)
         if item is None:
             raise ItemNotFound()

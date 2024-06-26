@@ -23,7 +23,9 @@ class MongoDBRepository[ModelType: Document, SchemaType: BaseModel, IDType](Repo
         return self.schema.model_validate(item, from_attributes=True)
 
     async def get_many(
-        self, count: int, offset: int,
+        self,
+        count: int,
+        offset: int,
     ) -> tuple[list[SchemaType], int]:
         query = self.model.find_many()
         items = await query.skip(offset).to_list(count)

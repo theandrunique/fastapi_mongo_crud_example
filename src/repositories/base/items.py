@@ -19,7 +19,9 @@ class ItemsRepository:
 
     @abstractmethod
     async def get_many(
-        self, count: int, offset: int,
+        self,
+        count: int,
+        offset: int,
     ) -> tuple[list[ItemSchema], int]: ...
 
     @abstractmethod

@@ -4,7 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from src.config import settings
-from src.database import Database
+from src.database import DBHelper
 from src.items.models import ItemODM
 from src.items.service import ItemsService
 from src.repositories.base.items import ItemsRepository
@@ -20,9 +20,9 @@ async def init_mongodb() -> None:
     await init_beanie(database=db, document_models=[ItemODM])
 
 
-def init_db() -> Database:
+def init_db() -> DBHelper:
     engine = create_async_engine(url=settings.SQLALCHEMY_DATABASE_URL)
-    return Database(
+    return DBHelper(
         engine=engine,
         session_factory=async_sessionmaker(
             bind=engine,
@@ -37,7 +37,7 @@ def init_container() -> punq.Container:
     container = punq.Container()
 
     container.register(
-        Database,
+        DBHelper,
         instance=init_db(),
         scope=punq.Scope.singleton,
     )

@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
+from src.database import DBHelper
 from src.repositories.base.sqlalchemy_repository import SQLAlchemyRepository
 
 
@@ -46,20 +47,19 @@ async def async_engine():
 
 
 @pytest.fixture(scope="function")
-async def async_session(async_engine):
+async def db_helper(async_engine):
     async_session = async_sessionmaker[AsyncSession](
         async_engine, class_=AsyncSession, expire_on_commit=False
     )
-    async with async_session() as session:
-        yield session
+    db_helper = DBHelper(session_factory=async_session, engine=async_engine)
+    return db_helper
 
 
 @pytest.fixture(scope="function")
-async def repository(async_session):
-    repo = SQLAlchemyRepository()
+async def repository(db_helper):
+    repo = SQLAlchemyRepository(db_helper=db_helper)
     repo.model = User
     repo.schema = UserSchema
-    await repo.init(async_session)
     yield repo
 
 

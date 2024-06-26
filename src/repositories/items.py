@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from src.database import DBHelper
 from src.items.models import ItemODM, ItemORM, ItemSchema
 from src.repositories.base.items import ItemsRepository
 from src.repositories.base.mongo_repository import MongoDBRepository
@@ -19,7 +20,7 @@ class SQLAlchemyItemsRepository(
     SQLAlchemyRepository[ItemORM, ItemSchema, UUID],
     ItemsRepository,
 ):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, db_helper: DBHelper):
         self.model = ItemORM
         self.schema = ItemSchema
-        super().__init__(*args, **kwargs)
+        super().__init__(db_helper=db_helper)

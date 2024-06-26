@@ -12,7 +12,9 @@ class Repository[SchemaType: BaseModel, IDType](ABC):
 
     @abstractmethod
     async def get_many(
-        self, count: int, offset: int,
+        self,
+        count: int,
+        offset: int,
     ) -> tuple[list[SchemaType], int]: ...
 
     @abstractmethod

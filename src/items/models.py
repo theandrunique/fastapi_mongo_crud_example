@@ -23,7 +23,7 @@ class ItemORM(BaseORM):
 
 
 class ItemODM(Document):
-    id: UUID = Field(default_factory=uuid4) # type: ignore
+    id: UUID = Field(default_factory=uuid4)  # type: ignore
     name: str
     price: float
-    count: int # type: ignore
+    count: int  # type: ignore
