@@ -1,7 +1,7 @@
 from typing import Any
 from uuid import UUID
 
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 
 from src.dependencies import Container, Provide
 from src.schemas import Pagination, PaginationResponse
@@ -37,7 +37,7 @@ async def get_item(
     return found_item
 
 
-@router.post("")
+@router.post("", status_code=status.HTTP_201_CREATED)
 async def create_item(
     new_item_data: ItemCreate, items_service=Provide(Container.ItemsService)
 ) -> ItemSchema:
@@ -45,7 +45,7 @@ async def create_item(
     return new_item
 
 
-@router.patch("/{item_id}")
+@router.patch("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def update_item(
     item_id: UUID,
     updated_item: ItemUpdate,
@@ -58,7 +58,7 @@ async def update_item(
     await items_service.update(item.id, updated_item)
 
 
-@router.delete("/{item_id}")
+@router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_item(
     item_id: UUID, items_service=Provide(Container.ItemsService)
 ) -> None:
