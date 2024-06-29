@@ -43,14 +43,14 @@ def init_container() -> punq.Container:
     )
 
     container.register(
-        ItemsRepository, SQLAlchemyItemsRepository, scope=punq.Scope.transient
+        ItemsRepository, SQLAlchemyItemsRepository, scope=punq.Scope.singleton
     )
 
     # container.register(
     # ItemsRepository, MongoItemsRepository, scope=punq.Scope.singleton
     # )
 
-    container.register(ItemsService, scope=punq.Scope.transient)
+    container.register(ItemsService, scope=punq.Scope.singleton)
 
     return container
 
