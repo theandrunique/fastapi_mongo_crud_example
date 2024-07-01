@@ -2,9 +2,9 @@ from uuid import uuid4
 
 import pytest
 
-from src.items.exceptions import ItemNotFound
-from src.items.models import ItemSchema
+from src.items.dto import ItemDTO
 from src.items.schemas import ItemCreate, ItemUpdate
+from src.items.service_exc import DeleteItemError
 
 
 async def test_add_item(service, fake_repository, faker):
@@ -13,7 +13,7 @@ async def test_add_item(service, fake_repository, faker):
         price=faker.random_number(digits=2),
         count=faker.random_int(1, 100),
     )
-    expected_item = ItemSchema(
+    expected_item = ItemDTO(
         id=uuid4(),
         name=item_create.name,
         price=item_create.price,
@@ -33,7 +33,7 @@ async def test_add_item(service, fake_repository, faker):
 
 async def test_get_all_items(service, fake_repository, faker):
     items = [
-        ItemSchema(
+        ItemDTO(
             id=uuid4(),
             name=faker.name(),
             price=faker.random_number(digits=2),
@@ -55,7 +55,7 @@ async def test_get_all_items(service, fake_repository, faker):
 
 async def test_get_item(service, fake_repository, faker):
     item_id = uuid4()
-    expected_item = ItemSchema(
+    expected_item = ItemDTO(
         id=item_id,
         name=faker.name(),
         price=faker.random_number(2),
@@ -82,31 +82,23 @@ async def test_get_item_not_found(service, fake_repository):
 async def test_update_item(service, fake_repository, faker):
     item_id = uuid4()
 
-    existing_item = ItemSchema(
-        id=item_id,
-        name=faker.name(),
-        price=faker.random_number(digits=2),
-        count=faker.random_int(min=1, max=100),
-    )
     updated_values = ItemUpdate(
         name=faker.name(),
         price=faker.random_number(digits=2),
         count=faker.random_int(min=1, max=100),
     )
-    updated_item = ItemSchema(
+    updated_item = ItemDTO(
         id=item_id,
         name=updated_values.name,  # type: ignore
         price=updated_values.price,  # type: ignore
         count=updated_values.count,  # type: ignore
     )
 
-    fake_repository.get.return_value = existing_item
     fake_repository.update.return_value = updated_item
 
     await service.update(item_id, updated_values)
 
-    fake_repository.get.assert_called_once_with(item_id)
-    fake_repository.update.assert_called_once_with(item_id, existing_item)
+    fake_repository.update.assert_called_once_with(item_id, updated_item)
 
 
 async def test_update_item_not_found(service, fake_repository, faker):
@@ -116,18 +108,22 @@ async def test_update_item_not_found(service, fake_repository, faker):
         price=faker.random_number(digits=2),
         count=faker.random_int(min=1, max=100),
     )
+    updated_item = ItemDTO(
+        id=item_id,
+        name=updated_values.name,  # type: ignore
+        price=updated_values.price,  # type: ignore
+        count=updated_values.count,  # type: ignore
+    )
     fake_repository.get.return_value = None
 
-    with pytest.raises(ItemNotFound):
-        await service.update(item_id, updated_values)
+    await service.update(item_id, updated_values)
 
-    fake_repository.get.assert_called_once_with(item_id)
-    fake_repository.update.assert_not_called()
+    fake_repository.update.assert_called_once_with(item_id, updated_item)
 
 
 async def test_delete_item(service, fake_repository, faker):
     item_id = uuid4()
-    existing_item = ItemSchema(
+    existing_item = ItemDTO(
         id=item_id,
         name=faker.name(),
         price=faker.random_number(digits=2),
@@ -146,7 +142,7 @@ async def test_delete_item_not_found(service, fake_repository):
     item_id = uuid4()
     fake_repository.get.return_value = None
 
-    with pytest.raises(ItemNotFound):
+    with pytest.raises(DeleteItemError):
         await service.delete(item_id)
 
     fake_repository.get.assert_called_once_with(item_id)

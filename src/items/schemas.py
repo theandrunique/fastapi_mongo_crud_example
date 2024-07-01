@@ -1,14 +1,13 @@
-from pydantic import BaseModel, Field
+from uuid import UUID
 
-from src.items.models import ItemSchema
+from pydantic import BaseModel
 
-# class Item(BaseModel):
-# id: PyObjectId = Field(
-# validation_alias=AliasChoices("id", "_id"), serialization_alias="id"
-# )
-# name: str
-# price: float
-# count: int
+
+class ItemSchema(BaseModel):
+    id: UUID
+    name: str
+    price: float
+    count: int
 
 
 class ItemCreate(BaseModel):
@@ -18,10 +17,6 @@ class ItemCreate(BaseModel):
 
 
 class ItemUpdate(BaseModel):
-    name: str | None = Field(None)
-    price: float | None = Field(None)
-    count: int | None = Field(None)
-
-
-class ItemCollection(BaseModel):
-    items: list[ItemSchema]
+    name: str
+    price: float
+    count: int

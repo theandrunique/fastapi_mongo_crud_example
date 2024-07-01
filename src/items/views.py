@@ -18,29 +18,26 @@ async def get_items(
     items_service=Provide(Container.ItemsService),
 ) -> Any:
     items, total = await items_service.get_all(pagination.limit, pagination.offset)
+    return {
+        "items": items,
+        "limit": len(items),
+        "offset": pagination.offset,
+        "total": total,
+    }
 
-    return PaginationResponse[ItemSchema](
-        items=items,
-        limit=len(items),
-        offset=pagination.offset,
-        total=total,
-    )
 
-
-@router.get("/{item_id}")
-async def get_item(
-    item_id: UUID, items_service=Provide(Container.ItemsService)
-) -> ItemSchema:
+@router.get("/{item_id}", response_model=ItemSchema)
+async def get_item(item_id: UUID, items_service=Provide(Container.ItemsService)) -> Any:
     found_item = await items_service.get(item_id)
     if not found_item:
         raise ItemNotFound()
     return found_item
 
 
-@router.post("", status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=ItemSchema)
 async def create_item(
     new_item_data: ItemCreate, items_service=Provide(Container.ItemsService)
-) -> ItemSchema:
+) -> Any:
     new_item = await items_service.add(new_item_data)
     return new_item
 

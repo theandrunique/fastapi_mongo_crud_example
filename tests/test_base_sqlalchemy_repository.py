@@ -1,12 +1,13 @@
+from dataclasses import dataclass
 from typing import Any
 
 import pytest
 from faker import Faker
-from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from src.database import DBHelper
+from src.dto import BaseDTO
 from src.repositories.base.sqlalchemy_repository import SQLAlchemyRepository
 
 
@@ -20,7 +21,8 @@ class User(BaseORM):
     name: Mapped[str]
 
 
-class UserSchema(BaseModel):
+@dataclass(frozen=True)
+class UserDTO(BaseDTO):
     id: int
     name: str
 
@@ -59,7 +61,7 @@ async def db_helper(async_engine):
 async def repository(db_helper):
     repo = SQLAlchemyRepository(db_helper=db_helper)
     repo.model = User
-    repo.schema = UserSchema
+    repo.schema = UserDTO
     yield repo
 
 
@@ -93,7 +95,7 @@ async def test_get_many_items(repository, faker):
 async def test_update_item(repository, random_user_schema, faker):
     new_item = await repository.add(**random_user_schema)
     updated_name = faker.name()
-    await repository.update(new_item.id, UserSchema(id=new_item.id, name=updated_name))
+    await repository.update(new_item.id, UserDTO(id=new_item.id, name=updated_name))
     updated_item = await repository.get(new_item.id)
     assert updated_item is not None
     assert updated_item.name == updated_name

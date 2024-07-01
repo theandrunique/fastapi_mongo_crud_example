@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from uuid import UUID
 
-from src.items.models import ItemSchema
+from src.items.dto import ItemDTO
 
 
 class ItemsRepository:
@@ -12,23 +12,23 @@ class ItemsRepository:
         name: str,
         price: float,
         count: int,
-    ) -> ItemSchema: ...
+    ) -> ItemDTO: ...
 
     @abstractmethod
-    async def get(self, id: UUID) -> ItemSchema | None: ...
+    async def get(self, id: UUID) -> ItemDTO | None: ...
 
     @abstractmethod
     async def get_many(
         self,
         count: int,
         offset: int,
-    ) -> list[ItemSchema]: ...
+    ) -> list[ItemDTO]: ...
 
     @abstractmethod
     async def count(self) -> int: ...
 
     @abstractmethod
-    async def update(self, id: UUID, updated_item: ItemSchema): ...
+    async def update(self, id: UUID, updated_item: ItemDTO): ...
 
     @abstractmethod
     async def delete(self, id: UUID) -> None: ...

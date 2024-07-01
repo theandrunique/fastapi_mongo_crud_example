@@ -1,17 +1,10 @@
 from uuid import UUID, uuid4
 
 from beanie import Document
-from pydantic import BaseModel, Field
+from pydantic import Field
 from sqlalchemy.orm import Mapped
 
 from src.models import BaseORM
-
-
-class ItemSchema(BaseModel):
-    id: UUID
-    name: str
-    price: float
-    count: int
 
 
 class ItemORM(BaseORM):
